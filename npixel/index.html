@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>엔픽셀 사원증 만들기</title>
+<link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%22102.88%2046.50%2048.47%2048.47%22%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20103.38%2047.38%20L%20134.76%2094.46%20L%20150.46%2094.46%20L%20119.07%2047.38%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20103.38%2094.46%20L%20119.07%2094.46%20L%20119.07%2078.77%20L%20103.38%2078.77%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20142.61%2046.99%20C%20138.06%2046.99%20134.37%2050.68%20134.37%2055.23%20C%20134.37%2059.78%20138.06%2063.47%20142.61%2063.47%20C%20147.16%2063.47%20150.85%2059.78%20150.85%2055.23%20C%20150.85%2050.68%20147.16%2046.99%20142.61%2046.99%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preload" as="image" href="i/9759c02640_s.webp">
+<style>
+:root{--bg:#f4f6f8;--surface:#fff;--line:#e3e6ea;--line-strong:#cfd4da;--text:#1b1f24;--muted:#66707b;--faint:#98a1ab;--danger:#d93a2b;
+  --brand:#00CCFF;--ink:#14212b;--soft:#eef9fc;--ring:rgba(0,204,255,.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input{font:inherit;color:inherit}
+.hidden{display:none!important}
+
+.hero{background:#fff;border-bottom:1px solid var(--line);padding:22px 24px 26px}
+.hero-in{max-width:1040px;margin:0 auto}
+.brand-mark{display:block;height:24px;width:auto;margin-bottom:22px}
+.hero h1{font-size:clamp(24px,4vw,30px);line-height:1.3;letter-spacing:-.6px;font-weight:700}
+
+main{max-width:1088px;margin:24px auto 0;padding:0 24px 72px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px}
+.side{position:sticky;top:20px}
+.step{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:16px}
+.step i{font-style:normal;flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+.step small{font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0;margin-left:auto}
+.section + .section{margin-top:32px;padding-top:28px;border-top:1px solid var(--line)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.field label span{font-weight:400;color:var(--faint);font-size:12px;margin-left:4px}
+.inp{width:100%;height:48px;padding:0 14px;border:1px solid var(--line-strong);border-radius:11px;background:#fff;outline:none;font-size:16px;transition:border-color .12s,box-shadow .12s}
+.inp:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.inp.err{border-color:var(--danger)}
+.inp::placeholder{color:#b3b9c1}
+.errmsg{color:var(--danger);font-size:12.5px;margin-top:5px;min-height:0}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.gi{display:block;width:100%;border:1.5px solid var(--line);border-radius:13px;background:#fff;padding:6px;cursor:pointer;transition:border-color .1s,box-shadow .1s}
+.gi:hover{border-color:var(--line-strong)}
+.gi:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.gi.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.gi img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:contain;border-radius:8px;background:#f5f6f8}
+
+.side-h{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px;text-align:center}
+.stage{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px 24px}
+.stage .idc{margin:0 auto}
+.btn{width:100%;height:54px;border:0;border-radius:13px;background:var(--ink);color:#fff;font-weight:700;font-size:16px;cursor:pointer;margin-top:14px;transition:filter .12s}
+.btn:hover{filter:brightness(1.18)}
+.btn[disabled]{opacity:.65;cursor:wait}
+.btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line-strong)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
+/* ───── 사원증 ───── */
+.idc{container-type:inline-size;width:250px;aspect-ratio:54/86;background:#fff;position:relative;border-radius:14px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.06),0 10px 28px rgba(20,33,43,.12);color:#111}
+.idc > *{--m:calc(100cqw / 54);position:absolute}
+.idc .ko{left:calc(5.5*var(--m));top:calc(6.2*var(--m));font:700 calc(5.4*var(--m))/1.1 'Noto Sans KR',sans-serif;letter-spacing:calc(-.15*var(--m));white-space:nowrap}
+.idc .en{left:calc(5.6*var(--m));top:calc(13.4*var(--m));font:400 calc(2.75*var(--m))/1.1 Outfit,sans-serif;color:#333;white-space:nowrap}
+.idc .art{left:calc(4*var(--m));right:calc(4*var(--m));top:calc(22*var(--m));bottom:calc(4*var(--m));display:flex;align-items:center;justify-content:center}
+.idc .art img{max-width:100%;max-height:100%;object-fit:contain}
+.idc .art .empty{width:100%;height:100%;border:1.5px dashed #d5d9de;border-radius:calc(2*var(--m));display:flex;align-items:center;justify-content:center;text-align:center;color:#a5adb6;font:500 calc(2.4*var(--m))/1.5 Pretendard,sans-serif;padding:calc(3*var(--m))}
+.idc .ph{color:#c3c8ce}
+.idc.back .msg{left:0;right:0;top:calc(36*var(--m));text-align:center;font:400 calc(2.45*var(--m))/1.55 'Noto Sans KR',sans-serif;letter-spacing:calc(-.05*var(--m))}
+.idc.back .tel{left:0;right:0;top:calc(45.2*var(--m));text-align:center;font:400 calc(2.6*var(--m))/1 Outfit,'Noto Sans KR',sans-serif}
+.idc.back .tel b{font-weight:600}
+.idc.back .blogo{left:50%;transform:translateX(-50%)}
+.idc.back[data-corp="NPIXEL"] .blogo{top:calc(70*var(--m));width:calc(22*var(--m))}
+.idc.back[data-corp="EX2"] .blogo{top:calc(64*var(--m));height:calc(12*var(--m))}
+
+
+.stage .idc{width:min(100%,250px)}
+.idc .ko,.idc .en,.idc.back .msg,.idc.back .tel{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif}
+
+.modal{position:fixed;inset:0;background:rgba(15,22,30,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.box{background:#fff;border-radius:20px;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;padding:28px;text-align:center}
+.box h2{font-size:21px;letter-spacing:-.4px}
+.box p{color:var(--muted);font-size:14px;margin-top:8px}
+.box .idc{width:190px;margin:20px auto 0;text-align:left}
+.btns{display:flex;gap:8px;margin-top:20px}
+.btns .btn{margin-top:0}
+.done{display:none;max-width:520px;margin:0 auto;text-align:center}
+.done .panel{padding:36px 28px}
+.done h2{font-size:24px;letter-spacing:-.5px}
+.done p{color:var(--muted);margin-top:8px}
+.done .idc{width:210px;margin:24px auto 0;text-align:left}
+body.is-done .layout{display:none}
+body.is-done .done{display:block}
+
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr}
+  .side{position:static;margin:28px 0 4px}
+  .stage{background:var(--bg);border:0;padding:18px}
+  .stage .idc{width:190px}
+}
+@media (max-width:480px){
+  .hero{padding:18px 16px 20px}
+  .brand-mark{margin-bottom:18px}
+  main{padding:0 16px 56px}
+  .panel{padding:22px 18px}
+  .gal{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .step small{display:none}
+}
+</style>
+</head>
+<body data-corp="NPIXEL">
+<header class="hero"><div class="hero-in">
+  <img class="brand-mark" alt="엔픽셀" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%22182.41%2013.88%2058.47%2012.08%22%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20220.16%2020.84%20L%20222.14%2020.84%20L%20222.14%2019.00%20L%20220.16%2019.00%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20190.90%2021.85%20L%20184.00%2014.37%20L%20182.91%2014.37%20L%20182.91%2025.42%20L%20184.88%2025.42%20L%20184.88%2017.95%20L%20191.73%2025.41%20L%20191.76%2025.45%20L%20192.87%2025.45%20L%20192.87%2014.40%20L%20190.90%2014.40%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20197.35%2021.74%20L%20200.46%2021.74%20C%20201.54%2021.74%20202.44%2021.39%20203.14%2020.69%20C%20203.85%2019.99%20204.21%2019.10%20204.21%2018.05%20C%20204.21%2017%20203.85%2016.11%20203.14%2015.42%20C%20202.43%2014.72%20201.56%2014.37%20200.54%2014.37%20L%20195.28%2014.37%20L%20195.28%2025.45%20L%20197.35%2025.45%20Z%20M%20197.35%2016.11%20L%20200.10%2016.11%20C%20200.67%2016.11%20201.16%2016.30%20201.55%2016.67%20C%20201.94%2017.05%20202.13%2017.5%20202.13%2018.04%20C%20202.13%2018.60%20201.94%2019.05%20201.54%2019.43%20C%20201.14%2019.80%20200.64%2019.99%20200.04%2019.99%20L%20197.35%2019.99%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20208.16%2014.37%20L%20206.09%2014.37%20L%20206.09%2025.45%20L%20208.16%2025.45%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20234.32%2014.37%20L%20232.25%2014.37%20L%20232.25%2025.45%20L%20240.38%2025.45%20L%20240.38%2023.60%20L%20234.32%2023.60%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20229.84%2019.00%20L%20224.12%2019.00%20L%20224.12%2020.84%20L%20229.84%2020.84%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20222.14%2019.00%20L%20224.12%2019.00%20L%20224.12%2016.23%20L%20230.16%2016.23%20L%20230.16%2014.39%20L%20222.14%2014.39%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20222.14%2025.45%20L%20230.16%2025.45%20L%20230.16%2023.61%20L%20224.12%2023.61%20L%20224.12%2020.84%20L%20222.14%2020.84%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20220.76%2014.37%20L%20218.29%2014.37%20L%20215.16%2018.34%20L%20212.02%2014.37%20L%20209.55%2014.37%20L%20213.92%2019.91%20L%20209.55%2025.45%20L%20212.02%2025.45%20L%20215.16%2021.48%20L%20218.29%2025.45%20L%20220.76%2025.45%20L%20216.39%2019.91%20Z%22%2F%3E%3C%2Fsvg%3E">
+  <h1>사원증 신청 페이지</h1>
+</div></header>
+
+<main>
+  <div class="layout">
+    <div class="panel">
+      <section class="section">
+        <div class="step"><i>1</i>이름 입력</div>
+        <div class="row2">
+          <div class="field"><label for="ko">한글 이름</label>
+            <input id="ko" class="inp" placeholder="홍길동" maxlength="30" autocomplete="name"><div class="errmsg" id="koErr"></div></div>
+          <div class="field"><label for="en">영문 이름<span>이름 성 순서</span></label>
+            <input id="en" class="inp" placeholder="Gildong Hong" maxlength="60" autocomplete="off" autocapitalize="words"><div class="errmsg" id="enErr"></div></div>
+        </div>
+      </section>
+      <section class="section" id="pick">
+        <div class="step"><i>2</i>이미지 선택<small></small></div>
+        <div class="gal" id="gal"><button type="button" class="gi" data-i="0" aria-pressed="false" aria-label="01_Dodoru_run"><img alt="" width="180" height="240" decoding="async" src="i/9759c02640_s.webp"></button></div>
+        <div class="errmsg" id="picErr"></div>
+      </section>
+      <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn" id="go">사원증 신청하기</button>
+    </div>
+    <aside class="side">
+      <div class="stage"><div class="side-h">내 사원증 미리보기</div><div class="idc" id="card"></div></div>
+    </aside>
+  </div>
+
+  <div class="done" id="done"><div class="panel">
+    <h2>신청이 접수됐어요</h2>
+    <p>담당자가 확인한 뒤 제작을 진행해요.</p>
+    <div class="idc" id="doneCard"></div>
+  </div></div>
+</main>
+
+<div class="modal hidden" id="modal"><div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <h2 id="mTitle">이대로 신청할까요?</h2>
+  <p>이름에 오탈자가 없는지 확인해 주세요.</p>
+  <div class="idc" id="mCard"></div>
+  <div class="errmsg" id="mErr" style="margin-top:12px"></div>
+  <div class="btns"><button class="btn ghost" id="mBack">수정하기</button><button class="btn" id="mOk">신청하기</button></div>
+</div></div>
+
+<script>
+const CORP="NPIXEL", ENDPOINT="", IMAGES=[{"i": 0, "name": "01_Dodoru_run", "small": "i/9759c02640_s.webp", "big": "i/9759c02640_b.webp"}], BLANK="";
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S={ko:'',en:'',f:null};
+const tidyEn=v=>v.replace(/\s+/g,' ').trim().split(' ').map(w=>w?w[0].toUpperCase()+w.slice(1):w).join(' ');
+function cardHTML(){
+  const ph=(v,p)=>v?esc(v):'<span class="ph">'+p+'</span>';
+  const art=S.f?'<img alt="" src="'+esc(S.big[S.f.i]?S.f.big:S.f.small)+'">':'<div class="empty">이미지를 선택하면<br>여기에 표시돼요</div>';
+  return '<div class="ko">'+ph(S.ko.trim(),'홍길동')+'</div><div class="en">'+ph(tidyEn(S.en),'Gildong Hong')+'</div><div class="art">'+art+'</div>';
+}
+S.big={};
+function render(){$('card').innerHTML=cardHTML();}
+// 큰 이미지는 손가락·마우스가 닿는 순간 미리 받아 둠 → 누르면 바로 선명
+function prefetch(f){ if(f._p) return; f._p=1; const im=new Image(); im.onload=()=>{S.big[f.i]=1; if(S.f===f) render();}; im.src=f.big; }
+const G=$('gal');
+G.addEventListener('pointerover',e=>{const b=e.target.closest('.gi'); if(b) prefetch(IMAGES[+b.dataset.i]);});
+G.addEventListener('pointerdown',e=>{const b=e.target.closest('.gi'); if(b) prefetch(IMAGES[+b.dataset.i]);});
+G.addEventListener('click',e=>{
+  const b=e.target.closest('.gi'); if(!b) return;
+  S.f=IMAGES[+b.dataset.i]; prefetch(S.f);
+  G.querySelectorAll('.gi').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on);});
+  $('picErr').textContent=''; render();
+});
+[['ko','koErr'],['en','enErr']].forEach(([id,er])=>$(id).addEventListener('input',e=>{
+  S[id]=e.target.value; e.target.classList.remove('err'); $(er).textContent=''; render();
+}));
+$('en').addEventListener('blur',e=>{const t=tidyEn(e.target.value);e.target.value=t;S.en=t;render();});
+$('go').onclick=()=>{
+  S.ko=S.ko.trim(); S.en=tidyEn(S.en); $('ko').value=S.ko; $('en').value=S.en; let bad=null;
+  if(!S.f){$('picErr').textContent='이미지를 선택해 주세요.';bad=$('pick');}
+  if(!/^[A-Za-z][A-Za-z .'\-]*$/.test(S.en)){$('en').classList.add('err');$('enErr').textContent='영문 이름을 영문으로 입력해 주세요.';bad=$('en');}
+  if(!S.ko){$('ko').classList.add('err');$('koErr').textContent='한글 이름을 입력해 주세요.';bad=$('ko');}
+  if(bad){bad.scrollIntoView({behavior:'smooth',block:'center'}); if(bad.focus) bad.focus({preventScroll:true}); return;}
+  $('mCard').innerHTML=cardHTML(); $('mErr').textContent=''; $('modal').classList.remove('hidden');
+};
+$('mBack').onclick=()=>$('modal').classList.add('hidden');
+$('mOk').onclick=async()=>{
+  const b=$('mOk'); b.disabled=true; b.textContent='신청 중…'; $('mErr').textContent='';
+  try{
+    if(!ENDPOINT) await new Promise(r=>setTimeout(r,300));   // 연결 전 미리보기: 저장 안 함
+    else{
+      const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({ko:S.ko,en:S.en,image:S.f.name,website:$('website').value})});
+      const j=await r.json(); if(!j.ok) throw new Error(j.error||'');
+    }
+    $('doneCard').innerHTML=cardHTML(); $('modal').classList.add('hidden'); document.body.classList.add('is-done'); scrollTo(0,0);
+  }catch(e){
+    b.disabled=false; b.textContent='다시 시도'; $('mErr').textContent=(e&&e.message&&!/fetch|network|JSON/i.test(e.message))?e.message:'신청하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.';
+  }
+};
+// 모바일: 미리보기를 신청 버튼 바로 위로 — 이름·이미지를 고른 뒤 자연스럽게 확인
+if(matchMedia('(max-width:820px)').matches) $('go').before(document.querySelector('.side'));
+render();
+</script>
+</body>
+</html>
