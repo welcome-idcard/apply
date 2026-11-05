@@ -156,7 +156,7 @@ body.is-done .done{display:block}
 </div></div>
 
 <script>
-const CORP="NPIXEL", ENDPOINT="", IMAGES=[{"i": 0, "name": "01_Dodoru_run", "small": "i/9759c02640_s.webp", "big": "i/9759c02640_b.webp"}], BLANK="";
+const CORP="NPIXEL", ENDPOINT="https://script.google.com/macros/s/AKfycbxpzzTQLekyJ4DUP4LxCMgRvdF4_acwohpClAE6zuhvi6ZjqiFxmR8KlDQ1gFif0oQI/exec", IMAGES=[{"i": 0, "name": "01_Dodoru_run", "small": "i/9759c02640_s.webp", "big": "i/9759c02640_b.webp"}], BLANK="";
 const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const S={ko:'',en:'',f:null};
 const tidyEn=v=>v.replace(/\s+/g,' ').trim().split(' ').map(w=>w?w[0].toUpperCase()+w.slice(1):w).join(' ');
