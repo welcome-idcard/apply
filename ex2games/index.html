@@ -158,7 +158,11 @@ body.is-done .done{display:block}
 <script>
 const CORP="EX2", ENDPOINT="https://script.google.com/macros/s/AKfycbzMfzqAmppl795R8USaTV5ZjnGbSL6U-Yb0JXQCQfyxStE7orF66J4FC2fxLruAD2Qz/exec", IMAGES=[{"i": 0, "name": "01_PC_Early_N_C001", "small": "i/965f08026f_s.webp", "big": "i/965f08026f_b.webp"}, {"i": 1, "name": "02_PC_Early_N_C002", "small": "i/19017a7939_s.webp", "big": "i/19017a7939_b.webp"}, {"i": 2, "name": "03_PC_F_Arc_C001", "small": "i/b5bd5335c4_s.webp", "big": "i/b5bd5335c4_b.webp"}, {"i": 3, "name": "04_PC_F_Mag_C001", "small": "i/767895e93d_s.webp", "big": "i/767895e93d_b.webp"}, {"i": 4, "name": "05_PC_F_War_C001", "small": "i/6b2135b346_s.webp", "big": "i/6b2135b346_b.webp"}, {"i": 5, "name": "06_PC_F_Wiz_C001", "small": "i/6cfc4e7dfb_s.webp", "big": "i/6cfc4e7dfb_b.webp"}, {"i": 6, "name": "07_PC_Knt_F_C001", "small": "i/5779a4fc87_s.webp", "big": "i/5779a4fc87_b.webp"}, {"i": 7, "name": "08_PC_M_Knt_C001", "small": "i/75b5a36c96_s.webp", "big": "i/75b5a36c96_b.webp"}, {"i": 8, "name": "09_PC_M_War_C001", "small": "i/b8246135e5_s.webp", "big": "i/b8246135e5_b.webp"}, {"i": 9, "name": "10_PC_M_Wiz_C001", "small": "i/695ce5a67e_s.webp", "big": "i/695ce5a67e_b.webp"}, {"i": 10, "name": "11_T_PC_M_Ass_C001", "small": "i/ce00b7ba6e_s.webp", "big": "i/ce00b7ba6e_b.webp"}], BLANK="";
 const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const S={ko:'',en:'',f:null};
+const S={ko:'',en:'',f:null}; let RID='';
+// 작성 중 내용을 이 브라우저에만 임시 저장 (신청이 끝나면 지움)
+const DK='idcard_draft_'+CORP;
+function saveDraft(){try{localStorage.setItem(DK,JSON.stringify({t:Date.now(),ko:S.ko,en:S.en,i:S.f?S.f.i:null}));}catch(e){}}
+function clearDraft(){try{localStorage.removeItem(DK);}catch(e){}}
 const tidyEn=v=>v.replace(/\s+/g,' ').trim().split(' ').map(w=>w?w[0].toUpperCase()+w.slice(1):w).join(' ');
 function cardHTML(){
   const ph=(v,p)=>v?esc(v):'<span class="ph">'+p+'</span>';
@@ -176,10 +180,10 @@ G.addEventListener('click',e=>{
   const b=e.target.closest('.gi'); if(!b) return;
   S.f=IMAGES[+b.dataset.i]; prefetch(S.f);
   G.querySelectorAll('.gi').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on);});
-  $('picErr').textContent=''; render();
+  $('picErr').textContent=''; render(); saveDraft();
 });
 [['ko','koErr'],['en','enErr']].forEach(([id,er])=>$(id).addEventListener('input',e=>{
-  S[id]=e.target.value; e.target.classList.remove('err'); $(er).textContent=''; render();
+  S[id]=e.target.value; e.target.classList.remove('err'); $(er).textContent=''; render(); saveDraft();
 }));
 $('en').addEventListener('blur',e=>{const t=tidyEn(e.target.value);e.target.value=t;S.en=t;render();});
 $('go').onclick=()=>{
@@ -188,6 +192,7 @@ $('go').onclick=()=>{
   if(!/^[A-Za-z][A-Za-z .'\-]*$/.test(S.en)){$('en').classList.add('err');$('enErr').textContent='영문 이름을 영문으로 입력해 주세요.';bad=$('en');}
   if(!S.ko){$('ko').classList.add('err');$('koErr').textContent='한글 이름을 입력해 주세요.';bad=$('ko');}
   if(bad){bad.scrollIntoView({behavior:'smooth',block:'center'}); if(bad.focus) bad.focus({preventScroll:true}); return;}
+  RID=Date.now().toString(36)+Math.random().toString(36).slice(2,12);   // 다시 눌러도 한 건만 저장되도록
   $('mCard').innerHTML=cardHTML(); $('mErr').textContent=''; $('modal').classList.remove('hidden');
 };
 $('mBack').onclick=()=>$('modal').classList.add('hidden');
@@ -196,17 +201,25 @@ $('mOk').onclick=async()=>{
   try{
     if(!ENDPOINT) await new Promise(r=>setTimeout(r,300));   // 연결 전 미리보기: 저장 안 함
     else{
-      const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({ko:S.ko,en:S.en,image:S.f.name,website:$('website').value})});
-      const j=await r.json(); if(!j.ok) throw new Error(j.error||'');
+      const ac=new AbortController(), timer=setTimeout(()=>ac.abort(),60000);
+      try{
+        const r=await fetch(ENDPOINT,{method:'POST',signal:ac.signal,headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify({ko:S.ko,en:S.en,image:S.f.name,rid:RID,website:$('website').value})});
+        const j=await r.json(); if(!j.ok) throw new Error(j.error||'');
+      }finally{clearTimeout(timer);}
     }
-    $('doneCard').innerHTML=cardHTML(); $('modal').classList.add('hidden'); document.body.classList.add('is-done'); scrollTo(0,0);
+    clearDraft(); $('doneCard').innerHTML=cardHTML(); $('modal').classList.add('hidden'); document.body.classList.add('is-done'); scrollTo(0,0);
   }catch(e){
-    b.disabled=false; b.textContent='다시 시도'; $('mErr').textContent=(e&&e.message&&!/fetch|network|JSON/i.test(e.message))?e.message:'신청하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.';
+    b.disabled=false; b.textContent='다시 시도'; $('mErr').textContent=(e&&e.message&&!/fetch|network|JSON|abort/i.test(e.message))?e.message:'신청하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요. 다시 눌러도 두 번 접수되지 않아요.';
   }
 };
 // 모바일: 미리보기를 신청 버튼 바로 위로 — 이름·이미지를 고른 뒤 자연스럽게 확인
 if(matchMedia('(max-width:820px)').matches) $('go').before(document.querySelector('.side'));
+(function(){let d=null;try{d=JSON.parse(localStorage.getItem(DK)||'null');}catch(e){}
+  if(!d||Date.now()-(d.t||0)>30*86400000)return;
+  S.ko=d.ko||'';S.en=d.en||'';$('ko').value=S.ko;$('en').value=S.en;
+  if(IMAGES[d.i]){S.f=IMAGES[d.i];prefetch(S.f);const b=G.querySelector('.gi[data-i="'+d.i+'"]');if(b){b.classList.add('on');b.setAttribute('aria-pressed',true);}}
+})();
 render();
 </script>
 </body>
