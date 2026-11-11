@@ -22,18 +22,13 @@
 
 `ENDPOINT`를 빈 문자열로 두면 저장 없이 미리보기 모드로 동작.
 
-## Apps Script 서버 코드 (`gas/`)
-- `gas/Code.gs`, `gas/appsscript.json` — 제출을 받는 독립 Apps Script(doPost만 있음).
-  배포 원본은 Drive의 「사원증 신청 페이지(신규입사자)」 프로젝트(엔픽셀용).
-- **반영 방식:** 사용자가 GitHub에서 `gas/Code.gs`를 복사 → Apps Script 편집기에 붙여넣기 → 저장 →
-  배포 관리 → 새 버전으로 배포. 그래서 서버 코드 수정은 항상 `gas/Code.gs` 전체가 그대로 붙여넣기 가능한 상태여야 함.
-  Claude는 Apps Script를 직접 수정·배포할 수 없음(Drive 커넥터로 읽기만 가능).
-- 법인별로 프로젝트가 따로 배포됨. 상단 상수 `SHEET_URL`, `CORP`('NPIXEL'/'EX2')만 다름.
-  저장소의 `Code.gs`는 엔픽셀 값 기준 — EX2 쪽에 붙여넣을 땐 두 상수를 EX2 값으로 바꿔야 함.
-- 처리: 이름 재검증 → Drive 이미지 폴더(`IMAGE_FOLDER`)에 파일 존재 확인 → 스프레드시트 '사원증 신청' 탭에
-  헤더 이름 기준으로 행 추가(상태 '접수') → `NOTIFY` 메일 알림. 시간당 30건 제한, rid 6시간 캐시로 중복 방지,
-  허니팟 걸리면 저장 안 하고 메일만(시간당 5통).
-- 프론트의 검증 규칙·전송 필드(`ko, en, image, rid, website`)를 바꾸면 `Code.gs`도 같이 맞출 것.
+## 관련 저장소 (중요)
+- 이 저장소(`welcome-idcard/apply`)는 **GitHub Pages로 공개 배포되는 결과물**만 둠. 서버 코드·비공개 값은 여기 두지 말 것.
+- 원본 소스와 Apps Script 코드는 `npixel-ter/bizcard-idcard-request` (임직원용 명함·사원증 앱과 같은 저장소):
+  - `src/newhire/index.src.html`, `build_newhire.py`, `endpoints.json` → 이 저장소의 `npixel/`, `ex2games/`를 생성
+  - `src/newhire/Intake.gs` → 빌드되어 `npixel/Intake.gs`, `ex2/Intake.gs` (입사예정자 제출 받는 Apps Script)
+- 사용자는 그 저장소의 `npixel/*.gs`, `ex2/*.gs`를 GitHub에서 복사 → Apps Script에 붙여넣고 배포함.
+- 페이지 수정 요청 시: 이 저장소의 HTML을 고쳐 Pages에 반영하고, 가능하면 원본(`src/newhire/index.src.html`)에도 같은 변경을 맞춰 둘 것.
 
 ## 참고
 - 사원증 카드는 54×86 비율, `container-type` + `--m`(1mm 단위) 기반 배치.
