@@ -21,7 +21,19 @@
 4. 완료 화면 표시, localStorage 임시저장(`idcard_draft_<CORP>`, 30일) 삭제
 
 `ENDPOINT`를 빈 문자열로 두면 저장 없이 미리보기 모드로 동작.
-Apps Script 서버 코드는 이 저장소에 없음.
+
+## Apps Script 서버 코드 (`gas/`)
+- `gas/Code.gs`, `gas/appsscript.json` — 제출을 받는 독립 Apps Script(doPost만 있음).
+  배포 원본은 Drive의 「사원증 신청 페이지(신규입사자)」 프로젝트(엔픽셀용).
+- **반영 방식:** 사용자가 GitHub에서 `gas/Code.gs`를 복사 → Apps Script 편집기에 붙여넣기 → 저장 →
+  배포 관리 → 새 버전으로 배포. 그래서 서버 코드 수정은 항상 `gas/Code.gs` 전체가 그대로 붙여넣기 가능한 상태여야 함.
+  Claude는 Apps Script를 직접 수정·배포할 수 없음(Drive 커넥터로 읽기만 가능).
+- 법인별로 프로젝트가 따로 배포됨. 상단 상수 `SHEET_URL`, `CORP`('NPIXEL'/'EX2')만 다름.
+  저장소의 `Code.gs`는 엔픽셀 값 기준 — EX2 쪽에 붙여넣을 땐 두 상수를 EX2 값으로 바꿔야 함.
+- 처리: 이름 재검증 → Drive 이미지 폴더(`IMAGE_FOLDER`)에 파일 존재 확인 → 스프레드시트 '사원증 신청' 탭에
+  헤더 이름 기준으로 행 추가(상태 '접수') → `NOTIFY` 메일 알림. 시간당 30건 제한, rid 6시간 캐시로 중복 방지,
+  허니팟 걸리면 저장 안 하고 메일만(시간당 5통).
+- 프론트의 검증 규칙·전송 필드(`ko, en, image, rid, website`)를 바꾸면 `Code.gs`도 같이 맞출 것.
 
 ## 참고
 - 사원증 카드는 54×86 비율, `container-type` + `--m`(1mm 단위) 기반 배치.
