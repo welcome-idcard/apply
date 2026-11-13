@@ -9,6 +9,9 @@
 <link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%22102.88%2046.50%2048.47%2048.47%22%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20103.38%2047.38%20L%20134.76%2094.46%20L%20150.46%2094.46%20L%20119.07%2047.38%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20103.38%2094.46%20L%20119.07%2094.46%20L%20119.07%2078.77%20L%20103.38%2078.77%20Z%22%2F%3E%3Cpath%20fill%3D%22%2300CCFF%22%20d%3D%22M%20142.61%2046.99%20C%20138.06%2046.99%20134.37%2050.68%20134.37%2055.23%20C%20134.37%2059.78%20138.06%2063.47%20142.61%2063.47%20C%20147.16%2063.47%20150.85%2059.78%20150.85%2055.23%20C%20150.85%2050.68%20147.16%2046.99%20142.61%2046.99%22%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" media="print" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<!-- 사원증 미리보기 글꼴: 실제 사원증·승인 창과 같은 글꼴 (cards.css 기준) -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Outfit:wght@400;600&display=swap">
 <link rel="preload" as="image" href="i/a827036bb2_s.webp"><link rel="preload" as="image" href="i/acf94a0bdd_s.webp"><link rel="preload" as="image" href="i/f3cc4117d4_s.webp"><link rel="preload" as="image" href="i/83800e9ae9_s.webp"><link rel="preload" as="image" href="i/6707c651e6_s.webp"><link rel="preload" as="image" href="i/0000d9fecf_s.webp">
 <style>
 :root{--bg:#f4f6f8;--surface:#fff;--line:#e3e6ea;--line-strong:#cfd4da;--text:#1b1f24;--muted:#66707b;--faint:#98a1ab;--danger:#d93a2b;
@@ -76,7 +79,9 @@ main{max-width:1088px;margin:24px auto 0;padding:0 24px 72px}
 
 
 .stage .idc{width:min(100%,250px)}
-.idc .ko,.idc .en,.idc.back .msg,.idc.back .tel{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif}
+/* 사원증 안 글자는 cards.css 글꼴(Noto Sans KR · Outfit) 그대로 — 페이지 글꼴로 바꾸지 않음 (승인 창·실물과 같은 폭으로 넘침 확인) */
+.fit{background:#fff7ed;border:1px solid #fde3c4;color:#8a4b10;border-radius:11px;padding:11px 13px;font-size:13px;line-height:1.55;margin-top:16px;text-align:left}
+.fit b{font-weight:700}
 
 .modal{position:fixed;inset:0;background:rgba(15,22,30,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
 .box{background:#fff;border-radius:20px;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;padding:28px;text-align:center}
@@ -133,6 +138,7 @@ body.is-done .done{display:block}
         <div class="errmsg" id="picErr"></div>
       </section>
       <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="fit hidden" id="fit" role="status"></div>
       <button class="btn" id="go">사원증 신청하기</button>
     </div>
     <aside class="side">
@@ -151,6 +157,7 @@ body.is-done .done{display:block}
   <h2 id="mTitle">이대로 신청할까요?</h2>
   <p>이름에 오탈자가 없는지 확인해 주세요.</p>
   <div class="idc" id="mCard"></div>
+  <div class="fit hidden" id="mFit"></div>
   <div class="errmsg" id="mErr" style="margin-top:12px"></div>
   <div class="btns"><button class="btn ghost" id="mBack">수정하기</button><button class="btn" id="mOk">신청하기</button></div>
 </div></div>
@@ -170,7 +177,37 @@ function cardHTML(){
   return '<div class="ko">'+ph(S.ko.trim(),'홍길동')+'</div><div class="en">'+ph(tidyEn(S.en),'Gildong Hong')+'</div><div class="art">'+art+'</div>';
 }
 S.big={};
-function render(){$('card').innerHTML=cardHTML();}
+/* ───── 글자 넘침 확인 (신청 페이지·승인 창·입사예정자 페이지 공용) ─────
+   인쇄 위치 그대로 그린 카드에서 글자가 카드 오른쪽 여백을 넘거나 로고와 겹치는지 실제 화면 크기로 잼.
+   반환: 넘친 항목 이름 배열 (예: ['영문명', '조직']) — 글꼴이 늦게 오면 크기가 바뀌므로 fontsReady 뒤에 다시 확인 */
+function overflowOf(card){
+  if (!card || !card.isConnected) return [];
+  const box = card.getBoundingClientRect();
+  if (!box.width) return [];
+  const out = [], add = n => { if (out.indexOf(n) < 0) out.push(n); };
+  const right = (el, limit) => el && el.getBoundingClientRect().right > limit + 0.5;
+  if (card.classList.contains('bc')) {
+    const u = box.width / 255.118, edge = box.right - 13 * u;    // 왼쪽 여백(13pt)과 같은 오른쪽 여백
+    const logo = card.querySelector('.logo');
+    const nm = card.querySelector('.nm');
+    // 이름 줄은 로고 왼쪽까지만 (로고보다 아래로 내려가는 긴 이름도 오른쪽 여백까지만)
+    if (nm && logo && right(nm, logo.getBoundingClientRect().left - 4 * u)) add(right(nm.querySelector('.k'), logo.getBoundingClientRect().left - 4 * u) ? '국문명' : '영문명');
+    card.querySelectorAll('.og > div').forEach(d => { if (right(d, edge)) add(d.dataset.f || '조직'); });
+    const ct2 = card.querySelector('.ct2');
+    if (right(ct2, edge)) add('이메일');
+  } else if (card.classList.contains('idc')) {
+    const m = box.width / 54, edge = box.right - 5.5 * m;
+    if (right(card.querySelector('.ko'), edge)) add('국문명');
+    if (right(card.querySelector('.en'), edge)) add('영문명');
+  }
+  return out;
+}
+const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+// 이름이 사원증 여백을 넘으면 신청 버튼 위·확인창에 알림 (신청은 막지 않음)
+let FIT=[];
+const fitMsg=()=>FIT.length?'<b>'+esc(FIT.join(' · '))+'</b>이(가) 사원증 여백을 넘어요. 이대로 제작하면 잘려 보일 수 있어요. 줄여 쓸 수 있는지 확인해 주세요. (예: 중간 이름은 이니셜로)':'';
+function render(){$('card').innerHTML=cardHTML(); FIT=overflowOf($('card')); $('fit').innerHTML=fitMsg(); $('fit').classList.toggle('hidden',!FIT.length);}
+fontsReady.then(render);
 // 큰 이미지는 손가락·마우스가 닿는 순간 미리 받아 둠 → 누르면 바로 선명
 function prefetch(f){ if(f._p) return; f._p=1; const im=new Image(); im.onload=()=>{S.big[f.i]=1; if(S.f===f) render();}; im.src=f.big; }
 const G=$('gal');
@@ -193,9 +230,11 @@ $('go').onclick=()=>{
   if(!S.ko){$('ko').classList.add('err');$('koErr').textContent='한글 이름을 입력해 주세요.';bad=$('ko');}
   if(bad){bad.scrollIntoView({behavior:'smooth',block:'center'}); if(bad.focus) bad.focus({preventScroll:true}); return;}
   RID=Date.now().toString(36)+Math.random().toString(36).slice(2,12);   // 다시 눌러도 한 건만 저장되도록
-  $('mCard').innerHTML=cardHTML(); $('mErr').textContent=''; $('modal').classList.remove('hidden');
+  render(); $('mCard').innerHTML=cardHTML(); $('mFit').innerHTML=fitMsg(); $('mFit').classList.toggle('hidden',!FIT.length);
+  $('mErr').textContent=''; $('modal').classList.remove('hidden'); $('mOk').focus();
 };
-$('mBack').onclick=()=>$('modal').classList.add('hidden');
+$('mBack').onclick=()=>{$('modal').classList.add('hidden'); $('go').focus();};
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('modal').classList.contains('hidden')&&!$('mOk').disabled) $('mBack').click(); });
 $('mOk').onclick=async()=>{
   const b=$('mOk'); b.disabled=true; b.textContent='신청 중…'; $('mErr').textContent='';
   try{
