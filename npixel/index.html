@@ -179,7 +179,7 @@ function cardHTML(){
 S.big={};
 /* ───── 글자 넘침 확인 (신청 페이지·승인 창·입사예정자 페이지 공용) ─────
    인쇄 위치 그대로 그린 카드에서 글자가 카드 오른쪽 여백을 넘거나 로고와 겹치는지 실제 화면 크기로 잼.
-   반환: 넘친 항목 이름 배열 (예: ['영문명', '조직']) — 글꼴이 늦게 오면 크기가 바뀌므로 fontsReady 뒤에 다시 확인 */
+   반환: 넘친 항목 이름 배열 (예: ['영문 이름', '조직']) — 글꼴이 늦게 오면 크기가 바뀌므로 fontsReady 뒤에 다시 확인 */
 function overflowOf(card){
   if (!card || !card.isConnected) return [];
   const box = card.getBoundingClientRect();
@@ -191,14 +191,14 @@ function overflowOf(card){
     const logo = card.querySelector('.logo');
     const nm = card.querySelector('.nm');
     // 이름 줄은 로고 왼쪽까지만 (로고보다 아래로 내려가는 긴 이름도 오른쪽 여백까지만)
-    if (nm && logo && right(nm, logo.getBoundingClientRect().left - 4 * u)) add(right(nm.querySelector('.k'), logo.getBoundingClientRect().left - 4 * u) ? '국문명' : '영문명');
+    if (nm && logo && right(nm, logo.getBoundingClientRect().left - 4 * u)) add(right(nm.querySelector('.k'), logo.getBoundingClientRect().left - 4 * u) ? '한글 이름' : '영문 이름');
     card.querySelectorAll('.og > div').forEach(d => { if (right(d, edge)) add(d.dataset.f || '조직'); });
     const ct2 = card.querySelector('.ct2');
     if (right(ct2, edge)) add('이메일');
   } else if (card.classList.contains('idc')) {
     const m = box.width / 54, edge = box.right - 5.5 * m;
-    if (right(card.querySelector('.ko'), edge)) add('국문명');
-    if (right(card.querySelector('.en'), edge)) add('영문명');
+    if (right(card.querySelector('.ko'), edge)) add('한글 이름');
+    if (right(card.querySelector('.en'), edge)) add('영문 이름');
   }
   return out;
 }
