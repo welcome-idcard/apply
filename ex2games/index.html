@@ -210,6 +210,9 @@ function render(){$('card').innerHTML=cardHTML(); FIT=overflowOf($('card')); $('
 fontsReady.then(render);
 // 큰 이미지는 손가락·마우스가 닿는 순간 미리 받아 둠 → 누르면 바로 선명
 function prefetch(f){ if(f._p) return; f._p=1; const im=new Image(); im.onload=()=>{S.big[f.i]=1; if(S.f===f) render();}; im.src=f.big; }
+// 페이지가 다 뜨면 남은 큰 이미지도 전부 미리 받아 둠 → 어떤 이미지를 눌러도 바로 선명 (휴대폰 데이터 절약 모드는 제외)
+window.addEventListener('load',()=>{ if(navigator.connection&&navigator.connection.saveData) return;
+  const idle=window.requestIdleCallback||(f=>setTimeout(f,200)); idle(()=>IMAGES.forEach(prefetch)); });
 const G=$('gal');
 G.addEventListener('pointerover',e=>{const b=e.target.closest('.gi'); if(b) prefetch(IMAGES[+b.dataset.i]);});
 G.addEventListener('pointerdown',e=>{const b=e.target.closest('.gi'); if(b) prefetch(IMAGES[+b.dataset.i]);});
